@@ -1,5 +1,4 @@
 from io import BytesIO
-from twisted.logger import Logger
 from twisted.web import server
 from twisted.web.http import _parseHeader
 
@@ -24,8 +23,6 @@ class DreamuploaderRequest(server.Request):
 
             contentType, contentTypeParameters = _parseHeader(ctype)
 
-            bytesRead = 0
-
             boundary = contentTypeParameters['boundary']
             compliantBoundary = MULTIPART_BOUNDARY_DELIMITER + boundary
 
@@ -35,7 +32,6 @@ class DreamuploaderRequest(server.Request):
             self.content.seek(0)
 
             nextLine = self.content.readline()
-            # bytesRead += len(nextLine)
 
             while nextLine and not originalOk:
                 strippedLine = nextLine.strip()
@@ -58,7 +54,6 @@ class DreamuploaderRequest(server.Request):
                     newContent.write(nextLine)
 
                 nextLine = self.content.readline()
-                # bytesRead += len(nextLine)
 
             if replacementsMade > 0:
                 self.content.close()
