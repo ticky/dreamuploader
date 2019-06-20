@@ -9,12 +9,13 @@ class DreamuploaderRequestTests(unittest.TestCase):
 
     def test_multipartFormatCorrection(self):
 
-        global requestBody
         requestBody = None
 
         class TestRequest(DreamuploaderRequest):
 
             def process(self):
+
+                global requestBody
                 requestBody = self.content.read()
                 self.write(b"done")
                 self.finish()
