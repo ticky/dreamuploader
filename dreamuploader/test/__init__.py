@@ -28,7 +28,7 @@ class DreamuploaderRequestTests(unittest.TestCase):
 POST /upload HTTP/1.0
 User-Agent: Mozilla/3.0 (DreamPassport/3.15)
 Content-Type: multipart/form-data; boundary=-----------------------------3943144700513
-Content-Length: 6635
+Content-Length: 6622
 
 -----------------------------3943144700513
 Content-Disposition: form-data; name="upfile"
@@ -125,6 +125,8 @@ Upload
 ''')
         channel.connectionLost(IOError("all done"))
 
+        import q; q.d();
+
         self.assertEqual(requestBody, b'''\
 -------------------------------3943144700513
 Content-Disposition: form-data; name="upfile"
@@ -219,4 +221,3 @@ Content-Disposition: form-data; name="submit"
 Upload
 -------------------------------3943144700513--
 ''')
-        import q; q.d();
