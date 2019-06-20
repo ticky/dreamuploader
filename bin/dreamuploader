@@ -1,0 +1,56 @@
+#!/usr/bin/env python3
+
+import base64
+import sys
+import json
+import klein
+from twisted.python import log
+from twisted.web import server
+from twisted.web.static import File, loadMimeTypes
+from twisted.internet import reactor
+from twisted.internet.endpoints import serverFromString
+from dreamuploader import DreamuploaderRequest
+
+log.startLogging(sys.stdout)
+
+app = klein.Klein()
+
+@app.route('/', methods=['GET'])
+def index(request):
+    request.setHeader('Content-Type', 'text/html')
+    return """<!DOCTYPE html>
+<html>
+  <head>
+    <title>Dreamuploader</title>
+  </head>
+  <body>
+    <h1>Dreamuploader</h1>
+    <form method="POST" action="/upload" enctype="multipart/form-data">
+      <input type="VMFILE" name="vmfile" size="13" />
+      <input type="text" name="filename" />
+      <input type="submit" value="Upload Now" />
+    </form>
+    <p><a href="/files">File list</a></p>
+  </body>
+</html>
+"""
+
+@app.route('/upload', methods=['POST'])
+def post(request):
+    return 'File not yet uploaded!'
+
+@app.route('/files/', branch=True)
+def files(request):
+    directoryListing = File("./")
+    directoryListing.contentTypes['.lcd'] = 'application/x-dreamcast-lcdimg'
+    directoryListing.contentTypes['.vmi'] = 'application/x-dreamcast-vms-info'
+    directoryListing.contentTypes['.vms'] = 'application/x-dreamcast-vms'
+    return directoryListing
+
+site = server.Site(app.resource())
+site.requestFactory = DreamuploaderRequest
+
+endpoint = serverFromString(reactor, "tcp:8080")
+endpoint.listen(site)
+
+reactor.run()
