@@ -1,3 +1,5 @@
+# -*- test-case-name: dreamuploader.test -*-
+
 from io import BytesIO
 from twisted.web import server
 from twisted.web.http import _parseHeader
