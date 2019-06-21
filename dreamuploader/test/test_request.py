@@ -1,5 +1,7 @@
 import unittest
 
+from io import BytesIO
+
 from twisted.web import http
 from twisted.test.proto_helpers import StringTransport
 
@@ -9,14 +11,12 @@ class DreamuploaderRequestTests(unittest.TestCase):
 
     def test_multipartFormatCorrection(self):
 
-        requestBody = None
+        requestBody = BytesIO()
 
         class TestRequest(DreamuploaderRequest):
 
             def process(self):
-
-                global requestBody
-                requestBody = self.content.read()
+                requestBody.write(self.content.read())
                 self.write(b"done")
                 self.finish()
 
@@ -28,7 +28,7 @@ class DreamuploaderRequestTests(unittest.TestCase):
 POST /upload HTTP/1.0
 User-Agent: Mozilla/3.0 (DreamPassport/3.15)
 Content-Type: multipart/form-data; boundary=-----------------------------3943144700513
-Content-Length: 6622
+Content-Length: 6714
 
 -----------------------------3943144700513
 Content-Disposition: form-data; name="upfile"
@@ -122,12 +122,10 @@ Content-Disposition: form-data; name="submit"
 
 Upload
 -----------------------------3943144700513--
-''')
+'''.replace(b"\n", b"\r\n"))
         channel.connectionLost(IOError("all done"))
 
-        import q; q.d();
-
-        self.assertEqual(requestBody, b'''\
+        self.assertEqual(requestBody.getvalue().replace(b"\r\n", b"\n"), b'''\
 -------------------------------3943144700513
 Content-Disposition: form-data; name="upfile"
 
