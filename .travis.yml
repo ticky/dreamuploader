@@ -1,0 +1,11 @@
+language: python
+matrix:
+  include:
+    - python: 3.7
+      env: TOXENV=tests
+install:
+  - pip install tox codecov
+script:
+  - tox -c tox.ini -e $TOXENV
+after_script:
+  - codecov
