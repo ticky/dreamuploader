@@ -2,6 +2,7 @@
 
 import base64
 import sys
+from jinja2 import Environment, PackageLoader, select_autoescape
 import klein
 from twisted.python import log
 from twisted.web import server
@@ -13,27 +14,18 @@ from dreamuploader import DreamuploaderRequest
 
 log.startLogging(sys.stdout)
 
+env = Environment(
+    loader=PackageLoader('dreamuploader', 'templates'),
+    autoescape=select_autoescape(['html'])
+)
+
 app = klein.Klein()
 
 @app.route('/', methods=['GET'])
 def index(request):
     request.setHeader('Content-Type', 'text/html')
-    return """<!DOCTYPE html>
-<html>
-  <head>
-    <title>Dreamuploader</title>
-  </head>
-  <body>
-    <h1>Dreamuploader</h1>
-    <form method="POST" action="/upload" enctype="multipart/form-data">
-      <input type="VMFILE" name="vmfile" size="13" />
-      <input type="text" name="filename" />
-      <input type="submit" value="Upload Now" />
-    </form>
-    <p><a href="/files">File list</a></p>
-  </body>
-</html>
-"""
+    template = env.get_template('index.html')
+    return template.render()
 
 @app.route('/upload', methods=['POST'])
 def post(request):

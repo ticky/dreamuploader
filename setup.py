@@ -12,7 +12,9 @@ setup(name='dreamuploader',
       scripts=['bin/dreamuploader'],
       install_requires=[
         'klein',
+        'jinja2',
         'q',
         'twisted'
       ],
+      include_package_data=True,
       zip_safe=False)
