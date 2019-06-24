@@ -1,15 +1,57 @@
-<!DOCTYPE html>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN"
+        "http://www.w3.org/MarkUp/Wilbur/HTML32.dtd">
 <html>
-  <head>
-    <title>Dreamuploader</title>
-  </head>
-  <body>
-    <h1>Dreamuploader</h1>
-    <form method="POST" action="/upload" enctype="multipart/form-data">
-      <input type="VMFILE" name="vmfile" size="13" />
-      <input type="text" name="filename" />
-      <input type="submit" value="Upload Now" />
-    </form>
-    <p><a href="/files">File list</a></p>
-  </body>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="GENERATOR" content="Mozilla/4.7C-CCK-MCD {C-UDP; EBM-APPLE} (Macintosh; I; PPC) [Netscape]">
+  <title>Dreamuploader</title>
+  <style type="text/css">body{font-family: Tahoma, sans-serif;}</style>
+</head>
+<body bgcolor="#5B87F2" text="#FFFFFF" link="#FFFFFF" alink="#CCFFFF" vlink="#99CCFF">
+<center>
+  <table cellspacing="0" cellpadding="0" cols="1" width="100%" height="100%">
+    <tr>
+      <td height="50%" align="CENTER">
+        <form method="POST" action="/upload" enctype="multipart/form-data">
+          <table cellspacing="0" cellpadding="2">
+            <tr>
+              <td align="RIGHT">
+                <label for="vmfile">VMU&nbsp;File</label>
+              </td>
+              <td>
+                <input type="VMFILE" name="vmfile">
+              </td>
+            </tr>
+            <tr>
+              <td align="RIGHT">
+                <label for="filename">Filename</label>
+              </td>
+              <td>
+                <input type="text" name="filename" maxlength="8">
+              </td>
+            </tr>
+            <tr>
+              <td align="CENTER" colspan="2">
+                <input type="submit" value="Upload File">
+              </td>
+            </tr>
+            <tr>
+              <td align="CENTER" colspan="2">
+                <a href="/files">Browse Files</a>
+              </td>
+            </tr>
+          </table>
+        </form>
+      </td>
+    </tr>
+    <tr>
+      <td height="50%">
+        <center>
+          <font size="+4">Dream<b>uploader</b></font>
+        </center>
+      </td>
+    </tr>
+  </table>
+</center>
+</body>
 </html>
