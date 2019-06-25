@@ -5,7 +5,7 @@ from io import BytesIO
 from twisted.web import http
 from twisted.test.proto_helpers import StringTransport
 
-from dreamuploader import DreamuploaderRequest
+from dreamuploader.request import DreamuploaderRequest
 
 class DreamuploaderRequestTests(unittest.TestCase):
 

@@ -2,7 +2,7 @@ import unittest
 from datetime import datetime
 import os
 
-from dreamuploader import VMSData
+from dreamuploader.vmsdata import VMSData
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
