@@ -4,6 +4,7 @@ import attr
 from base64 import b64decode
 from datetime import datetime
 from io import BytesIO
+import struct
 from urllib.parse import parse_qs
 
 # Hey Sega, uhhhh, what the heck is this about?
@@ -11,6 +12,10 @@ DREAMCAST_BASE64_TRANSLATION = bytes.maketrans(
     b'AZOLYNdnETmP6ci3Sze9IyXBhDgfQq7l5batM4rpKJj8CusxRF+k2V0wUGo1vWH/=',
     b'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/='
 )
+
+VMI_CHECKSUM_BASE = struct.unpack('<L', b'SEGA')[0]
+
+VMI_FORMAT = '<L32s32sHBBBBBBHH8s12sHHL'
 
 class VMSData:
     """
@@ -29,6 +34,10 @@ class VMSData:
     fl = None # TODO: oWo What is this? 🤔
     of = None # TODO: oWo What is this? 🤔
     timestamp = None
+
+    # Default description/copyright text
+    description = 'Dreamuploader for Python'
+    copyright = 'Made with <3 in 2019 by @ticky'
 
     def __init__(self, inbytes):
 
@@ -76,6 +85,49 @@ class VMSData:
 
         self.vms = b64decode(body.translate(DREAMCAST_BASE64_TRANSLATION))
         bytes.close()
+
+    def to_vmi(self, vmsname):
+
+        return struct.pack(
+            VMI_FORMAT,
+
+            # Checksum header
+            VMI_CHECKSUM_BASE & struct.unpack('<L', self.filename[0:4].encode())[0],
+
+            # VMI file description/copyright
+            self.description.encode(),
+            self.copyright.encode(),
+
+            # Date
+            self.timestamp.year,
+            self.timestamp.month,
+            self.timestamp.day,
+            self.timestamp.hour,
+            self.timestamp.minute,
+            self.timestamp.second,
+            self.timestamp.weekday() + 1,
+
+            # VMI format version
+            0,
+
+            # File number
+            1,
+
+            # Name of partner VMS file
+            vmsname.encode(),
+
+            # Filename when transferred to VMU
+            self.filename.encode(),
+
+            # File mode bitfield
+            0, # TODO: Make this do the correct thing
+
+            # Unused(?)
+            0,
+
+            # VMS File size in bytes
+            self.filesize
+        )
 
     # @classmethod
     # def from_path(cls, path):

@@ -12,6 +12,7 @@ def read_fixture(name):
 CAPVSSNK_PLANETWEB = read_fixture('CAPVSSNK_SYS-Planetweb.txt')
 CAPVSSNK_DREAMPASSPORT = read_fixture('CAPVSSNK_SYS-DreamPassport.txt')
 CAPVSSNK_VMS = read_fixture('CAPVSSNK_SYS.VMS')
+CAPVSSNK_VMI = read_fixture('CAPVSSNK.VMI')
 
 class VMSDataTests(unittest.TestCase):
 
@@ -24,6 +25,7 @@ class VMSDataTests(unittest.TestCase):
         self.assertEqual(parsed.filesize, 4608)
         self.assertEqual(parsed.blocksize, 9)
         self.assertEqual(parsed.timestamp, datetime.fromisoformat('2019-06-22T22:51:40'))
+        self.assertEqual(parsed.to_vmi('CAPVSSNK'), CAPVSSNK_VMI)
 
     def test_dreamPassportFormatInput(self):
 
@@ -34,3 +36,4 @@ class VMSDataTests(unittest.TestCase):
         self.assertEqual(parsed.filesize, 4608)
         self.assertEqual(parsed.blocksize, 9)
         self.assertEqual(parsed.timestamp, datetime.fromisoformat('2019-06-22T22:51:40'))
+        self.assertEqual(parsed.to_vmi('CAPVSSNK'), CAPVSSNK_VMI)
