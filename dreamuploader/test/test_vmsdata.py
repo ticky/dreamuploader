@@ -16,30 +16,31 @@ CAPVSSNK_VMI = read_fixture('CAPVSSNK.VMI')
 
 class VMSDataTests(unittest.TestCase):
 
-    def test_planetwebFormatInput(self):
+    def test_planetwebFormatPOSTInput(self):
 
         # Planetweb uses Windows-style line endings
-        parsed = VMSData(CAPVSSNK_PLANETWEB)
+        parsed = VMSData.from_post_bytes(CAPVSSNK_PLANETWEB)
         self.assertEqual(parsed.vms, CAPVSSNK_VMS)
         self.assertEqual(parsed.filename, 'CAPVSSNK_SYS')
         self.assertEqual(parsed.filesize, 4608)
-        self.assertEqual(parsed.blocksize, 9)
-        self.assertEqual(parsed.tp, 0)
-        self.assertEqual(parsed.fl, 0)
-        self.assertEqual(parsed.of, 0)
         self.assertEqual(parsed.timestamp, datetime.fromisoformat('2019-06-22T22:51:40'))
         self.assertEqual(parsed.to_vmi('CAPVSSNK'), CAPVSSNK_VMI)
 
-    def test_dreamPassportFormatInput(self):
+    def test_dreamPassportFormatPOSTInput(self):
 
         # Dream Passport uses Unix-style line endings
-        parsed = VMSData(CAPVSSNK_DREAMPASSPORT)
+        parsed = VMSData.from_post_bytes(CAPVSSNK_DREAMPASSPORT)
         self.assertEqual(parsed.vms, CAPVSSNK_VMS)
         self.assertEqual(parsed.filename, 'CAPVSSNK_SYS')
         self.assertEqual(parsed.filesize, 4608)
-        self.assertEqual(parsed.blocksize, 9)
-        self.assertEqual(parsed.tp, 0)
-        self.assertEqual(parsed.fl, 0)
-        self.assertEqual(parsed.of, 0)
+        self.assertEqual(parsed.timestamp, datetime.fromisoformat('2019-06-22T22:51:40'))
+        self.assertEqual(parsed.to_vmi('CAPVSSNK'), CAPVSSNK_VMI)
+
+    def test_fromVMI(self):
+
+        parsed = VMSData.from_vmi(CAPVSSNK_VMI)
+        self.assertEqual(parsed.vms, None)
+        self.assertEqual(parsed.filename, 'CAPVSSNK_SYS')
+        self.assertEqual(parsed.filesize, 4608)
         self.assertEqual(parsed.timestamp, datetime.fromisoformat('2019-06-22T22:51:40'))
         self.assertEqual(parsed.to_vmi('CAPVSSNK'), CAPVSSNK_VMI)

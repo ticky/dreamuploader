@@ -1,6 +1,7 @@
 # -*- test-case-name: dreamuploader.test.test_vmsdata -*-
 
 import attr
+import typing
 from base64 import b64decode
 from datetime import datetime
 from io import BytesIO
@@ -19,29 +20,27 @@ VMI_CHECKSUM_BASE = VMI_CHECKSUM_FORMAT.unpack(b'SEGA')[0]
 
 VMI_FORMAT = Struct('<L32s32sHBBBBBBHH8s12sHHL')
 
+@attr.s(auto_attribs=True)
 class VMSData:
     """
     A representation of Dreamcast Visual Memory System data,
     including both the raw file and file-system metadata.
     """
 
-    # Raw Visual Memory file data
-    vms = None
-
     # Metadata for VMI sidecar file
-    filename = None
-    filesize = None
-    blocksize = None
-    tp = None # TODO: oWo What is this? 🤔
-    fl = None # TODO: oWo What is this? 🤔
-    of = None # TODO: oWo What is this? 🤔
-    timestamp = None
+    filename: str = None
+    filesize: int = None
+    timestamp: datetime = None
+
+    # Raw Visual Memory file data
+    vms: bytes = None
 
     # Default description/copyright text
-    description = 'Dreamuploader for Python'
-    copyright = 'Made with <3 in 2019 by @ticky'
+    description: str = 'Dreamuploader for Python'
+    copyright: str = 'Made with <3 in 2019 by @ticky'
 
-    def __init__(self, inbytes):
+    @classmethod
+    def from_post_bytes(cls, inbytes):
 
         bytes = BytesIO(inbytes)
         header = BytesIO()
@@ -62,31 +61,57 @@ class VMSData:
         metadata = parse_qs(header.read())
         header.close()
 
-        filename = metadata[b'filename']
-        self.filename = filename[0].decode()
+        filename = metadata[b'filename'][0].decode()
 
-        filesize = metadata[b'fs']
-        self.filesize = int(filesize[0])
+        filesize = int(metadata[b'fs'][0])
 
-        blocksize = metadata[b'bl']
-        self.blocksize = int(blocksize[0])
+        blocksize = int(metadata[b'bl'][0])
 
-        tp = metadata[b'tp']
-        self.tp = int(tp[0])
-
-        fl = metadata[b'fl']
-        self.fl = int(fl[0])
-
-        of = metadata[b'of']
-        self.of = int(of[0])
-
-        timestamp = metadata[b'tm']
-        self.timestamp = datetime.strptime(timestamp[0].decode(), '%Y%m%d%H%M%S%w')
+        timestamp = datetime.strptime(metadata[b'tm'][0].decode(), '%Y%m%d%H%M%S%w')
 
         body = bytes.read()
 
-        self.vms = b64decode(body.translate(DREAMCAST_BASE64_TRANSLATION))
+        vms = b64decode(body.translate(DREAMCAST_BASE64_TRANSLATION))
         bytes.close()
+
+        return cls(
+            filename=filename,
+            filesize=filesize,
+            timestamp=timestamp,
+            vms=vms
+        )
+
+    @classmethod
+    def from_vmi(cls, vmi):
+
+        (
+            checksum,
+            description, copyright,
+            year, month, day, hour, minute, second, weekday,
+            version,
+            number,
+            vmsname,
+            filename,
+            mode,
+            _,
+            filesize
+        ) = VMI_FORMAT.unpack(vmi)
+
+        description = description.decode()
+        copyright = copyright.decode()
+
+        timestamp = datetime(year, month, day, hour, minute, second)
+
+        vmsname = vmsname.decode()
+        filename = filename.decode()
+
+        return cls(
+            filename=filename,
+            filesize=filesize,
+            timestamp=timestamp,
+            description=description,
+            copyright=copyright
+        )
 
     def to_vmi(self, vmsname):
 
@@ -128,6 +153,3 @@ class VMSData:
             # VMS File size in bytes
             self.filesize
         )
-
-    # @classmethod
-    # def from_path(cls, path):
