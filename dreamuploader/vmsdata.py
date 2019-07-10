@@ -70,13 +70,13 @@ class VMSData:
         self.blocksize = int(blocksize[0])
 
         tp = metadata[b'tp']
-        self.tp = tp[0]
+        self.tp = int(tp[0])
 
         fl = metadata[b'fl']
-        self.fl = fl[0]
+        self.fl = int(fl[0])
 
         of = metadata[b'of']
-        self.of = of[0]
+        self.of = int(of[0])
 
         timestamp = metadata[b'tm']
         self.timestamp = datetime.strptime(timestamp[0].decode(), '%Y%m%d%H%M%S%w')
