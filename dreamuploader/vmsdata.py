@@ -4,7 +4,7 @@ import attr
 from base64 import b64decode
 from datetime import datetime
 from io import BytesIO
-import struct
+from struct import Struct
 from urllib.parse import parse_qs
 
 # Hey Sega, uhhhh, what the heck is this about?
@@ -13,9 +13,11 @@ DREAMCAST_BASE64_TRANSLATION = bytes.maketrans(
     b'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/='
 )
 
-VMI_CHECKSUM_BASE = struct.unpack('<L', b'SEGA')[0]
+VMI_CHECKSUM_FORMAT = Struct('<L')
 
-VMI_FORMAT = '<L32s32sHBBBBBBHH8s12sHHL'
+VMI_CHECKSUM_BASE = VMI_CHECKSUM_FORMAT.unpack(b'SEGA')[0]
+
+VMI_FORMAT = Struct('<L32s32sHBBBBBBHH8s12sHHL')
 
 class VMSData:
     """
@@ -88,11 +90,9 @@ class VMSData:
 
     def to_vmi(self, vmsname):
 
-        return struct.pack(
-            VMI_FORMAT,
-
+        return VMI_FORMAT.pack(
             # Checksum header
-            VMI_CHECKSUM_BASE & struct.unpack('<L', self.filename[0:4].encode())[0],
+            VMI_CHECKSUM_BASE & VMI_CHECKSUM_FORMAT.unpack(self.filename[0:4].encode())[0],
 
             # VMI file description/copyright
             self.description.encode(),
