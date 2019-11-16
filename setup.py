@@ -12,8 +12,9 @@ setup(name='dreamuploader',
       scripts=['bin/dreamuploader'],
       install_requires=[
         'attrs',
-        'klein',
+        'django-htmlmin',
         'jinja2',
+        'klein',
         'q',
         'twisted'
       ],
