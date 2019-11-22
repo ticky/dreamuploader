@@ -11,6 +11,7 @@ setup(name='dreamuploader',
       packages=['dreamuploader'],
       scripts=['bin/dreamuploader'],
       install_requires=[
+        'attrs',
         'klein',
         'jinja2',
         'q',
