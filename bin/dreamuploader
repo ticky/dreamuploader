@@ -2,6 +2,7 @@
 
 import base64
 import sys
+from htmlmin.minify import html_minify
 from jinja2 import Environment, PackageLoader, select_autoescape
 import klein
 from twisted.python import log
@@ -25,7 +26,7 @@ app = klein.Klein()
 def index(request):
     request.setHeader('Content-Type', 'text/html')
     template = env.get_template('index.html')
-    return template.render()
+    return html_minify(template.render())
 
 @app.route('/upload', methods=['POST'])
 def post(request):
