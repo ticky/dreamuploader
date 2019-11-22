@@ -117,7 +117,7 @@ class VMSData:
 
         return VMI_FORMAT.pack(
             # Checksum header
-            VMI_CHECKSUM_BASE & VMI_CHECKSUM_FORMAT.unpack(self.filename[0:4].encode())[0],
+            VMI_CHECKSUM_BASE & VMI_CHECKSUM_FORMAT.unpack(vmsname[0:4].encode())[0],
 
             # VMI file description/copyright
             self.description.encode(),
