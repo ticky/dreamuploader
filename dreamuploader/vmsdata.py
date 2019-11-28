@@ -132,7 +132,7 @@ class VMSData:
     def to_vmi(self, vmsname):
 
         return VMI_FORMAT.pack(
-            # Checksum header
+            # Checksum header, TOTO: Fix this; it doesn't work properly?
             VMI_CHECKSUM_BASE & VMI_CHECKSUM_FORMAT.unpack(vmsname[0:4].encode())[0],
 
             # VMI file description/copyright
