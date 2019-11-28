@@ -18,7 +18,7 @@ VMI_CHECKSUM_FORMAT = Struct('<L')
 
 VMI_CHECKSUM_BASE = VMI_CHECKSUM_FORMAT.unpack(b'SEGA')[0]
 
-VMI_FORMAT = Struct('<L32s32sHBBBBBBHH8s12sHHL')
+VMI_FORMAT = Struct('<L32s32sHBBBBBBBBH8s12sHHL')
 
 @attr.s(auto_attribs=True)
 class VMSData:
@@ -88,7 +88,8 @@ class VMSData:
             checksum,
             description, copyright,
             year, month, day, hour, minute, second, weekday,
-            version,
+            version_minor,
+            version_major,
             number,
             vmsname,
             filename,
@@ -132,7 +133,10 @@ class VMSData:
             self.timestamp.second,
             self.timestamp.weekday() + 1,
 
-            # VMI format version
+            # Minor version
+            0,
+
+            # Major version
             0,
 
             # File number
