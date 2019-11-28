@@ -18,7 +18,7 @@ VMI_CHECKSUM_FORMAT = Struct('<L')
 
 VMI_CHECKSUM_BASE = VMI_CHECKSUM_FORMAT.unpack(b'SEGA')[0]
 
-VMI_FORMAT = Struct('<L32s32sHBBBBBBHH8s12sHHL')
+VMI_FORMAT = Struct('<L32s32sHBBBBBBBBH8s12sHHL')
 
 @attr.s(auto_attribs=True)
 class VMSData:
@@ -31,6 +31,11 @@ class VMSData:
     filename: str = None
     filesize: int = None
     timestamp: datetime = None
+    version_minor: int = 0
+    version_major: int = 0
+    file_number: int = 1
+    protected: bool = False
+    game_data: bool = False
 
     # Raw Visual Memory file data
     vms: bytes = None
@@ -69,6 +74,8 @@ class VMSData:
 
         timestamp = datetime.strptime(metadata[b'tm'][0].decode(), '%Y%m%d%H%M%S%w')
 
+        # TODO: figure out what `tp`, `fl` and `of` are
+
         body = bytes.read()
 
         vms = b64decode(body.translate(DREAMCAST_BASE64_TRANSLATION))
@@ -88,8 +95,9 @@ class VMSData:
             checksum,
             description, copyright,
             year, month, day, hour, minute, second, weekday,
-            version,
-            number,
+            version_minor,
+            version_major,
+            file_number,
             vmsname,
             filename,
             mode,
@@ -105,10 +113,18 @@ class VMSData:
         vmsname = vmsname.decode()
         filename = filename.decode()
 
+        protected = (mode << 0) == 1
+        game_data = (mode << 1) == 1
+
         return cls(
             filename=filename,
             filesize=filesize,
             timestamp=timestamp,
+            version_minor=version_minor,
+            version_major=version_major,
+            file_number=file_number,
+            protected=protected,
+            game_data=game_data,
             description=description,
             copyright=copyright
         )
@@ -117,7 +133,7 @@ class VMSData:
 
         return VMI_FORMAT.pack(
             # Checksum header
-            VMI_CHECKSUM_BASE & VMI_CHECKSUM_FORMAT.unpack(self.filename[0:4].encode())[0],
+            VMI_CHECKSUM_BASE & VMI_CHECKSUM_FORMAT.unpack(vmsname[0:4].encode())[0],
 
             # VMI file description/copyright
             self.description.encode(),
@@ -132,11 +148,14 @@ class VMSData:
             self.timestamp.second,
             self.timestamp.weekday() + 1,
 
-            # VMI format version
-            0,
+            # Minor version
+            self.version_minor,
+
+            # Major version
+            self.version_major,
 
             # File number
-            1,
+            self.file_number,
 
             # Name of partner VMS file
             vmsname.encode(),

@@ -5,13 +5,14 @@ import sys
 from htmlmin.minify import html_minify
 from jinja2 import Environment, PackageLoader, select_autoescape
 import klein
+import os
 from twisted.python import log
 from twisted.web import server
 from twisted.web.static import File
 from twisted.internet import reactor
 from twisted.internet.endpoints import serverFromString
 
-from dreamuploader import DreamuploaderRequest
+from dreamuploader import DreamuploaderRequest, VMSData
 
 log.startLogging(sys.stdout)
 
@@ -30,7 +31,26 @@ def index(request):
 
 @app.route('/upload', methods=['POST'])
 def post(request):
-    return 'File not yet uploaded!'
+    print(request.args)
+    filename = request.args.get(b'filename')[0].decode()
+
+    vmi_filename = filename + '.VMI'
+    vms_filename = filename + '.VMS'
+
+    # TODO: Check file isn't traversing up beyond current working directory
+
+    vmi_file = open(vmi_filename, 'bx')
+    vms_file = open(vms_filename, 'bx')
+
+    vmsdata = VMSData.from_post_bytes(request.args.get(b'vmfile')[0])
+
+    vmi_file.write(vmsdata.to_vmi(filename))
+    vms_file.write(vmsdata.vms)
+
+    vmi_file.close()
+    vms_file.close()
+
+    return 'File uploaded!'
 
 @app.route('/files/', branch=True)
 def files(request):
