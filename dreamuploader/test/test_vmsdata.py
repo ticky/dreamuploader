@@ -19,6 +19,8 @@ PYOFEVER_DREAMPASSPORT = read_fixture('PUYOFEVERSYS-DreamPassport.txt')
 PYOFEVER_VMS = read_fixture('PYOFEVER.VMS')
 PYOFEVER_VMI = read_fixture('PYOFEVER.VMI')
 
+BS_BM_M_VMI = read_fixture('BS_BM_M_.VMI')
+
 class VMSDataTests(unittest.TestCase):
 
     def test_planetwebFormatCAPVSSNKPOSTInput(self):
@@ -78,3 +80,17 @@ class VMSDataTests(unittest.TestCase):
         self.assertEqual(parsed.protected, False)
         self.assertEqual(parsed.game_data, False)
         self.assertEqual(parsed.to_vmi('CAPVSSNK'), CAPVSSNK_VMI)
+
+    def test_fromVMIBS_BM_M(self):
+
+        parsed = VMSData.from_vmi(BS_BM_M_VMI)
+        self.assertEqual(parsed.vms, None)
+        self.assertEqual(parsed.filename, 'DREAMKEY.S90')
+        self.assertEqual(parsed.filesize, 5632)
+        self.assertEqual(parsed.timestamp, datetime.fromisoformat('2003-09-12T10:50:58'))
+        self.assertEqual(parsed.version_minor, 1)
+        self.assertEqual(parsed.version_major, 1)
+        self.assertEqual(parsed.file_number, 1)
+        self.assertEqual(parsed.protected, False)
+        self.assertEqual(parsed.game_data, False)
+        self.assertEqual(parsed.to_vmi('CAPVSSNK'), BS_BM_M_VMI)
