@@ -132,7 +132,7 @@ class VMSData:
     def to_vmi(self, vmsname):
 
         return VMI_FORMAT.pack(
-            # Checksum header, TOTO: Fix this; it doesn't work properly?
+            # Checksum header
             VMI_CHECKSUM_BASE & VMI_CHECKSUM_FORMAT.unpack(vmsname[0:4].encode())[0],
 
             # VMI file description/copyright
@@ -149,13 +149,13 @@ class VMSData:
             self.timestamp.weekday() + 1,
 
             # Minor version
-            0,
+            self.version_minor,
 
             # Major version
-            0,
+            self.version_major,
 
             # File number
-            1,
+            self.file_number,
 
             # Name of partner VMS file
             vmsname.encode(),

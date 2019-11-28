@@ -93,4 +93,4 @@ class VMSDataTests(unittest.TestCase):
         self.assertEqual(parsed.file_number, 1)
         self.assertEqual(parsed.protected, False)
         self.assertEqual(parsed.game_data, False)
-        self.assertEqual(parsed.to_vmi('CAPVSSNK'), BS_BM_M_VMI)
+        self.assertEqual(parsed.to_vmi('BS_BM_M_'), BS_BM_M_VMI)
