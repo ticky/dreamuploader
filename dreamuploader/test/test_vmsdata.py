@@ -29,6 +29,11 @@ class VMSDataTests(unittest.TestCase):
         self.assertEqual(parsed.filename, 'CAPVSSNK_SYS')
         self.assertEqual(parsed.filesize, 4608)
         self.assertEqual(parsed.timestamp, datetime.fromisoformat('2019-06-22T22:51:40'))
+        self.assertEqual(parsed.version_minor, 0)
+        self.assertEqual(parsed.version_major, 0)
+        self.assertEqual(parsed.file_number, 1)
+        self.assertEqual(parsed.protected, False)
+        self.assertEqual(parsed.game_data, False)
         self.assertEqual(parsed.to_vmi('CAPVSSNK'), CAPVSSNK_VMI)
 
     def test_dreamPassportFormatCAPVSSNKPOSTInput(self):
@@ -39,6 +44,11 @@ class VMSDataTests(unittest.TestCase):
         self.assertEqual(parsed.filename, 'CAPVSSNK_SYS')
         self.assertEqual(parsed.filesize, 4608)
         self.assertEqual(parsed.timestamp, datetime.fromisoformat('2019-06-22T22:51:40'))
+        self.assertEqual(parsed.version_minor, 0)
+        self.assertEqual(parsed.version_major, 0)
+        self.assertEqual(parsed.file_number, 1)
+        self.assertEqual(parsed.protected, False)
+        self.assertEqual(parsed.game_data, False)
         self.assertEqual(parsed.to_vmi('CAPVSSNK'), CAPVSSNK_VMI)
 
     def test_dreamPassportFormatPUYOFEVERSYSPOSTInput(self):
@@ -48,13 +58,23 @@ class VMSDataTests(unittest.TestCase):
         self.assertEqual(parsed.filename, 'PUYOFEVERSYS')
         self.assertEqual(parsed.filesize, 2048)
         self.assertEqual(parsed.timestamp, datetime.fromisoformat('2005-08-28T23:27:24'))
+        self.assertEqual(parsed.version_minor, 0)
+        self.assertEqual(parsed.version_major, 0)
+        self.assertEqual(parsed.file_number, 1)
+        self.assertEqual(parsed.protected, False)
+        self.assertEqual(parsed.game_data, False)
         self.assertEqual(parsed.to_vmi('PYOFEVER'), PYOFEVER_VMI)
 
-    def test_fromVMI(self):
+    def test_fromVMICAPVSSNK(self):
 
         parsed = VMSData.from_vmi(CAPVSSNK_VMI)
         self.assertEqual(parsed.vms, None)
         self.assertEqual(parsed.filename, 'CAPVSSNK_SYS')
         self.assertEqual(parsed.filesize, 4608)
         self.assertEqual(parsed.timestamp, datetime.fromisoformat('2019-06-22T22:51:40'))
+        self.assertEqual(parsed.version_minor, 0)
+        self.assertEqual(parsed.version_major, 0)
+        self.assertEqual(parsed.file_number, 1)
+        self.assertEqual(parsed.protected, False)
+        self.assertEqual(parsed.game_data, False)
         self.assertEqual(parsed.to_vmi('CAPVSSNK'), CAPVSSNK_VMI)

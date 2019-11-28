@@ -31,6 +31,11 @@ class VMSData:
     filename: str = None
     filesize: int = None
     timestamp: datetime = None
+    version_minor: int = 0
+    version_major: int = 0
+    file_number: int = 1
+    protected: bool = False
+    game_data: bool = False
 
     # Raw Visual Memory file data
     vms: bytes = None
@@ -69,6 +74,8 @@ class VMSData:
 
         timestamp = datetime.strptime(metadata[b'tm'][0].decode(), '%Y%m%d%H%M%S%w')
 
+        # TODO: figure out what `tp`, `fl` and `of` are
+
         body = bytes.read()
 
         vms = b64decode(body.translate(DREAMCAST_BASE64_TRANSLATION))
@@ -90,7 +97,7 @@ class VMSData:
             year, month, day, hour, minute, second, weekday,
             version_minor,
             version_major,
-            number,
+            file_number,
             vmsname,
             filename,
             mode,
@@ -106,10 +113,18 @@ class VMSData:
         vmsname = vmsname.decode()
         filename = filename.decode()
 
+        protected = (mode << 0) == 1
+        game_data = (mode << 1) == 1
+
         return cls(
             filename=filename,
             filesize=filesize,
             timestamp=timestamp,
+            version_minor=version_minor,
+            version_major=version_major,
+            file_number=file_number,
+            protected=protected,
+            game_data=game_data,
             description=description,
             copyright=copyright
         )
