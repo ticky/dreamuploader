@@ -36,20 +36,23 @@ def post(request):
     if request.args.get(b'vmfile') is None:
         return 'You must select a file!'
 
-    if request.args.get(b'filename') is None or len(request.args.get(b'filename')[0]) == 0:
-        return 'You must type a file name!'
+    if request.args.get(b'filename') is None or len(request.args.get(b'filename')[0]) < 4:
+        return 'You must type a file name, and it needs to be at least four characters!'
 
-    filename = request.args.get(b'filename')[0].decode()
+    try:
+        filename = request.args.get(b'filename')[0].decode()
+    except UnicodeDecodeError:
+        return 'Unsupported characters in filename. Please make sure you are using the US keyboard if you have the option.'
 
     vmi_filename = filename + '.VMI'
     vms_filename = filename + '.VMS'
 
     # TODO: Check file isn't traversing up beyond current working directory
 
+    vmsdata = VMSData.from_post_bytes(request.args.get(b'vmfile')[0])
+
     vmi_file = open(vmi_filename, 'bx')
     vms_file = open(vms_filename, 'bx')
-
-    vmsdata = VMSData.from_post_bytes(request.args.get(b'vmfile')[0])
 
     vmi_file.write(vmsdata.to_vmi(filename))
     vms_file.write(vmsdata.vms)
