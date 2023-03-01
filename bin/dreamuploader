@@ -32,6 +32,13 @@ def index(request):
 @app.route('/upload', methods=['POST'])
 def post(request):
     print(request.args)
+
+    if request.args.get(b'vmfile') is None:
+        return 'You must select a file!'
+
+    if request.args.get(b'filename') is None or len(request.args.get(b'filename')[0]) == 0:
+        return 'You must type a file name!'
+
     filename = request.args.get(b'filename')[0].decode()
 
     vmi_filename = filename + '.VMI'
