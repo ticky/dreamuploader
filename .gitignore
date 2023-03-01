@@ -3,3 +3,6 @@ __pycache__
 *.egg-info
 .tox
 _trial_temp
+build
+*.VMI
+*.VMS
